@@ -2,15 +2,23 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no">
 
     <base target="main">
 
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
+    <link rel="stylesheet" href="jquery.mobile-1.3.1.min.css" />
     <link rel="stylesheet" href="bahrain_map.css" />
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+    <script src="jquery-1.9.1.min.js"></script>
+    <script src="jquery.mobile-1.3.1.min.js"></script>
     <script src="bahrain_map.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-33972052-2', 'bahrainwatch.org');
+        ga('send', 'pageview');
+    </script>
     <title>Bahrain Map</title>
 </head>
 <body>
@@ -32,19 +40,38 @@
             <li><a href="#anything">
                 <span class="ltr">#Bahrain</span> <span class="rtl">#البحرين</span>
             </a></li>
-            <li data-role="list-divider">
+            <li data-role="list-divider" data-theme="d">
                 <span class="ltr">Search Tweets</span>&nbsp;<span class="rtl">بحث التغريدات</span>
             </li>
             <li data-role="fieldcontain">
-                <input type="search" id="search"/>
+                <label for="search" class="ui-hidden-accessible">Search Tweets</label>
+                <input id="search" type="search" data-mini="true">
+            </li>
+            <li class="keyboard" data-role="list-divider" data-theme="d">
+                <span class="ltr">Keyboard</span>&nbsp;<span class="rtl">لوحة المفاتيح</span>
+            </li>
+            <li class="keyboard" data-role="fieldcontain">
+                <div class="keyboard ui-grid-b">
+                    <div class="ui-block-a"><div class="ui-bar ui-bar-d">&#9668;<br/>السابق<br/>previous</div></div>
+                    <div class="ui-block-b"><div class="ui-bar ui-bar-d">&#9660;<br/>الترجمة<br/>translate</div></div>
+                    <div class="ui-block-c"><div class="ui-bar ui-bar-d">&#9658;<br/>اللاحق<br/>next</div></div>
+                </div>
             </li>
         </ul>
+        <div id="links">
+            <a href="http://bahrainwatch.org">
+                <img id="bwlogo" src="images/bwlogo.png">
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.ibnkan.bahmap">
+                <img id="gplay" src="images/googleplay.png">
+            </a>
+        </div>
     </nav>
 
     <header data-role="header" data-position="fixed">
         <div data-role="controlgroup" data-type="horizontal">
-            <a href="#menu" data-role="button"><img src="menu.png"></a>
-            <a id="refresh" href="#" data-role="button"><img src="refresh.png"></a>
+            <a id="openmenu" href="#" data-role="button"><img src="images/menu.png"></a>
+            <a id="refresh" href="#" data-role="button"><img src="images/refresh.png"></a>
         </div>
         <h1>Bahrain Map خارطة البحرين</h1>
     </header>
@@ -53,14 +80,30 @@
 
     <footer data-role="footer" data-position="fixed">
         <div id="counter">
-            <img src="tweet.png">| <span id="index"></span><span id="total"></span></div>
+            <img src="images/tweet.png">| <span id="index"></span><span id="total"></span> <span id="location"></span> </div>
         <div data-role="controlgroup" data-type="horizontal">
-            <a id="prev" href="#" data-role="button"><img src="prev.png"></a>
-            <a id="info" href="#" data-role="button"><img src="info.png"></a>
-            <a id="next" href="#" data-role="button"><img src="next.png"></a>
+            <a id="prev" href="#" data-role="button"><img src="images/prev.png"></a>
+            <a id="info" href="#" data-role="button"><img src="images/info.png"></a>
+            <a id="next" href="#" data-role="button"><img src="images/next.png"></a>
         </div>
     </footer>
-
 </section>
+
+<div id="hidden">
+    <div class="profile">
+        <a title="User Profile" class="profile-link"></a>
+        <a title="User Profile"><img class="profile-image" src=""></a>
+    </div>
+
+    <div class="tweet-text"></div>
+
+    <div class="tweet-media"></div>
+
+    <div class="created-at">
+        <div class="tweet-time"></div>
+        <div class="tweet-duration"></div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -1,7 +1,5 @@
 @CHARSET "UTF-8";
 
-/* Start with core styles outside of a media query that apply to mobile and up */
-/* Global typography and design elements, stacked containers */
 html {
     height: 100%
 }
@@ -13,7 +11,7 @@ body {
 }
 
 body * {
-    font-family: Tahoma, Geneva, sans-serif;
+    font-family: Tahoma, Geneva, sans-serif, cursive;
     font-weight: normal;
     text-shadow: none;
 }
@@ -42,12 +40,10 @@ body * {
 #map-page .ui-header div {
     padding: 0;
     margin: 0;
+    float: left;
 }
 #map-page .ui-header h1 {
-    width: 100%;
-    margin: auto;
-    position: fixed;
-    top: 0.65em;
+    overflow: visible;
 }
 #map-page .ui-header img {
     height: 1.6em;
@@ -68,14 +64,16 @@ body * {
     height: 1.6em;
 }
 #counter {
-    font-size: 0.8375em;
-    position: fixed;
-    bottom: 0.65em;
+    /*font-size: small;*/
+    float: left;
 }
 #counter img {
     vertical-align: middle;
     padding-left: 0.3em;
     padding-right: 0.3em;
+}
+#index, #total, #location {
+    font-size: small;
 }
 
 #menu .rtl {
@@ -90,13 +88,49 @@ body * {
     display: block;
 }
 
-.infowindow {
+.ui-bar {
+    text-align: center;
+    font-size: 0.7em;
+}
+
+.keyboard {
+    display: none;
+}
+
+
+#links {
+    display: list-item;
+}
+#bwlogo {
+    width: 9.5em;
+    display: block;
+    margin: 0.5em auto;
+}
+#gplay {
+    width: 6.5em;
+    display: block;
+    margin: 0.5em auto;
+}
+
+#hidden {
+    visibility: hidden;
+    position: fixed;
     margin-top: 0.5em;
     margin-left: auto;
     margin-right: auto;
     max-width: 18em;
     text-align: center;
+    overflow: hidden;
+}
 
+.infowindow {
+    margin-top: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.25em;
+    max-width: 18em;
+    text-align: center;
+    overflow: hidden;
 }
 .profile {
     height: 2.5em;
@@ -135,6 +169,9 @@ body * {
     display: block;
 }
 
+.created-at {
+    margin-top: 0.25em;
+}
 .tweet-time {
     float: left;
     padding-left: 0.5em;
@@ -151,12 +188,18 @@ body * {
 }
 
 .tweet-media {
-    max-height: 10em;
     padding: 0.3em;
-    margin: 0.25em auto;
     border-radius: 0.25em;
     background: #222222;
+    text-align: center;
 }
+
+.tweet-media a img {
+    vertical-align: middle;
+    border: #cdcdcd solid thin;
+    border-radius: 0.25em;
+}
+
 
 
 /* First breakpoint at 576px */
@@ -166,6 +209,11 @@ body * {
     .infowindow {
         max-width: 22em;
     }
+
+    .keyboard {
+        display: list-item;
+    }
+
 }
 
 /* Second breakpoint at 800px */
