@@ -373,7 +373,6 @@ function clearMarkers(){
 
 
 function formatTime(tweet_time){
-
     var d = new Date(tweet_time);
     var now = new Date();
     var timelength = (now - d)/60000;
