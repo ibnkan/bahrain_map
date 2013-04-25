@@ -7,14 +7,13 @@ var currentsearch = null;
 var currentmarker = null;
 var ar = /[\u0600-\u06FF]/;
 var smallscreen = $(window).width() < 576;
-var protocol = 'https';
 
 window.onload = loadGmapsAPI;
 function loadGmapsAPI() {
     $.mobile.showPageLoadingMsg();
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&language=ar&' + 'callback=initialise';
+    script.src = 'http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&language=ar&' + 'callback=initialise';
     document.body.appendChild(script);
     $.mobile.hidePageLoadingMsg();
 }
@@ -106,16 +105,21 @@ function initialiseMenu() {
     });
 
     $(document).keydown(function(e){
-        switch (e.keyCode){
-            case 37:
-                $("#prev").trigger("click");
-                break;
-            case 39:
-                $("#next").trigger("click");
-                break;
-            case 40:
-                $("#info").trigger("click");
-                break;
+        if (markers.length > 0) {
+            switch (e.keyCode) {
+                case 37:
+                    $("#prev").trigger("click");
+                    break;
+                case 39:
+                    $("#next").trigger("click");
+                    break;
+                case 40:
+                    $("#info").trigger("click");
+                    break;
+                case 27:
+                    infowindow.close();
+                    break;
+            }
         }
     });
     $("#prev").click(function(){
@@ -138,13 +142,14 @@ function initialiseMenu() {
                 currentmarker = 0;
             }
             openCurrentMarker();
-        }    });
+        }
+    });
     $("#info").click(function(){
         var s = currentmarker;
         if(markers[s].lang === "ar" && markers[s].translation === null) {
             $.mobile.showPageLoadingMsg();
             ajaxtransl++;
-            $.ajaxSetup({timeout: 10000});
+            $.ajaxSetup({timeout: 15000});
             $.getJSON("http://api.mymemory.translated.net/get?langpair=ar|en&de=reda@bahrainwatch.org&q="
                     + encodeURIComponent(markers[s].text),
                 function(data){
@@ -201,30 +206,64 @@ function openCurrentMarker() {
 
     text = text.replace(/@\w+:*/gm, "").replace(/["“”]/gm,"").replace(/^:/gm,"");
 
+    var media = '';
     for(l in markers[s].urls) {
         var e_url = markers[s].urls[l].expanded_url;
         var d_url = markers[s].urls[l].display_url;
         text = text.replace(markers[s].urls[l].url,
             '<a href=\"' + e_url +'\">' + d_url + '</a>');
-    }
 
-    var media = '';
+        if(/youtube\.com|youtu\.be/g.test(e_url)){
+            media += e_url.replace(/feature=player_embedded&?/g,'').replace(
+                /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?([\w\-]{10,12})(?:&feature=related)?(?:[\w\-]{0})?/g,
+                '<iframe '
+                    + 'src="http://www.youtube.com/embed/$1?&fs=1"'
+                    + 'frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>'
+                    + '</iframe>').replace(/<\/iframe>.+$/g,'');
+        }
+        else if(/instagram\.com|instagr\.am/g.test(e_url)){
+            media += '<a href=\"'
+                + e_url
+                + '\"><img src=\"'
+                + e_url.concat('media/?size=m')
+                + '"></a>';
+
+        }
+        else if(/twitpic\.com/g.test(e_url)){
+            media += '<a href=\"'
+                + e_url
+                + '\"><img src=\"'
+                + e_url.replace(/(?:https?:\/\/)?(?:www\.)?(?:twitpic\.com)\/(.+)$/g,
+                'http://twitpic.com/show/full/$1.jpg')
+                + '"></a>';
+
+        }
+        else if(/\.jpg|\.png/g.test(e_url)){
+            media += '<a href=\"'
+                + e_url
+                + '\"><img src=\"'
+                + e_url
+                + '"></a>';
+        }
+    }
     if (markers[s].media !== undefined) {
-        $("#hidden .tweet-media").css('display','block');
         for (m in markers[s].media) {
             var e_url = markers[s].media[m].expanded_url;
             var d_url = markers[s].media[m].display_url;
+            text = text.replace(markers[s].media[m].url,
+                '<a href=\"' + e_url + '\">' + d_url + '</a>');
             media += '<a href=\"'
                 + e_url
                 + '\"><img src=\"'
                 + markers[s].media[m].media_url_https
                 + ':small"></a>';
-            text = text.replace(markers[s].media[m].url,
-                '<a href=\"' + e_url + '\">' + d_url + '</a>');
         }
     }
-    else{
-        $("#hidden .tweet-media").css('display','none');
+
+    if (media === '') {
+        $("#hidden .tweet-media").css('display', 'none');
+    } else {
+        $("#hidden .tweet-media").css('display','block');
     }
 
     $("#hidden .profile-link").text('@' + markers[s].from_user);
@@ -240,19 +279,15 @@ function openCurrentMarker() {
 
     infowindow.setContent(html);
     infowindow.open(map, markers[s]);
-    $(".infowindow .tweet-media img").css({
-        'max-width': '99%',
-        'max-height': $("#hidden").width() * (smallscreen? 0.4:0.65) + 'px'
-    });
     updateTweetIndex();
     refreshControlButtons();
 }
 
 function updateTweetIndex() {
     if (markers.length > 0) {
-        $("#index").text(currentmarker? (currentmarker + 1) + '/' : '');
+        $("#index").text((currentmarker + 1) + '/');
         $("#total").text(markers.length);
-        $("#location").text(currentmarker? markers[currentmarker].title : '');
+        $("#location").text(markers[currentmarker].title);
     }
     else {
         $("#index, #total, #location").text('');
@@ -270,11 +305,11 @@ function searchTweets(keywords, page) {
     keywords += arabic? "#Bahrain OR #البحرين)" : keywords === "("?"#Bahrain OR #البحرين)":"#Bahrain)";
     keywords += "-filter:retweets";
     $.ajax({
-        url: protocol + '://search.twitter.com/search.json',
+        url: 'http://search.twitter.com/search.json',
         type: 'GET',
         dataType: 'jsonp',
         cache : false,
-        timeout:10000,
+        timeout:15000,
         data: {
             q: keywords,
             lang: arabic? "ar" : "",
@@ -343,11 +378,7 @@ function processTweets(tweets, page) {
 }
 function showError(jqXHR, textStatus, errorThrown) {
     $.mobile.hidePageLoadingMsg();
-    alert("connection error: " + textStatus + "\nyour browser does not support HTTPS.\nnormal HTTP will be used instead.");
-    if(protocol === 'https'){
-        protocol = 'http';
-        searchTweets(currentsearch);
-    }
+    alert("connection error: " + textStatus);
     console.log("connection error: " + textStatus, errorThrown);
 }
 

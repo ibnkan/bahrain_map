@@ -195,11 +195,19 @@ body * {
 }
 
 .tweet-media a img {
+    /*max-width: 100%;*/
+    max-height: 50%;
     vertical-align: middle;
     border: #cdcdcd solid thin;
     border-radius: 0.25em;
 }
 
+.tweet-media iframe {
+    width: 100%;
+    height: 45%;
+    vertical-align: middle;
+    border-radius: 0.25em;
+}
 
 
 /* First breakpoint at 576px */
